@@ -12,7 +12,9 @@
 #define DT 3
 #define SW 4
 #define PIN_DS18B20 5
-#define PIN_RELAY 13
+#define PIN_PELTE 12
+#define PIN_OUT_VENT 11
+#define PIN_IN_VENT 10
 
 byte celciy[8] = {
     B00111,
@@ -253,9 +255,9 @@ void setPelte()
   prev_temp = current_temp;
 
   if (pelte_ON)
-    digitalWrite(PIN_RELAY, 0);
+    digitalWrite(PIN_PELTE, 0);
   if (!pelte_ON)
-    digitalWrite(PIN_RELAY, 1 );
+    digitalWrite(PIN_PELTE, 1 );
 }
 
 void setup()
@@ -276,8 +278,8 @@ void setup()
   MsTimer2::set(2, timerInterrupt); // задаем период прерывания по таймеру 2 мс
   MsTimer2::start();                // разрешаем прерывание по таймеру
 
-  pinMode(PIN_RELAY, OUTPUT);
-  digitalWrite(PIN_RELAY, 0);
+  pinMode(PIN_PELTE, OUTPUT);
+  digitalWrite(PIN_PELTE, 0);
 }
 
 void loop()
