@@ -60,10 +60,12 @@ float temperature;     // измеренная температура
 float current_temp, set_temp, prev_temp;
 float set_his = 2;
 
-bool pelte_ON;
+bool pelte_ON, in_vent_ON, out_vent_ON;
 
 byte setting_number = 1;
 bool set_mode = 0;
+
+uint32_t in_vent_timer, out_vent_timer;
 
 void isrCLK()
 {
@@ -214,8 +216,6 @@ void drawUI()
   // lcd.write(1);
   lcd.setCursor(15, 1);
   lcd.print("C");
-
-  settings();
 }
 
 void getTemp()
@@ -234,6 +234,24 @@ void getTemp()
   }
 }
 
+void setDoer()
+{
+  if (pelte_ON)
+    digitalWrite(PIN_PELTE, 0);
+  if (!pelte_ON)
+    digitalWrite(PIN_PELTE, 1);
+
+  if (in_vent_ON)
+    digitalWrite(PIN_IN_VENT, 1);
+  if (!in_vent_ON)
+    digitalWrite(PIN_IN_VENT, 0);
+
+  if (pelte_ON)
+    digitalWrite(PIN_OUT_VENT, 1); // ---------------------
+  if (!pelte_ON)
+    digitalWrite(PIN_OUT_VENT, 0); // ---------------------
+}
+
 void setPelte()
 {
   if (current_temp > prev_temp)
@@ -242,6 +260,7 @@ void setPelte()
     if (current_temp > set_temp + set_his)
     {
       pelte_ON = 1;
+      // in_vent_ON = 1;
     }
   }
   else if (current_temp < prev_temp)
@@ -249,15 +268,48 @@ void setPelte()
     if (current_temp <= set_temp)
     {
       pelte_ON = 0;
+      // out_vent_ON = 0;
     }
   }
 
   prev_temp = current_temp;
+  setDoer();
+}
 
+void setInVent()
+{
   if (pelte_ON)
-    digitalWrite(PIN_PELTE, 0);
-  if (!pelte_ON)
-    digitalWrite(PIN_PELTE, 1 );
+  {
+    if (millis() - in_vent_timer >= 20 * 1000)
+    {
+      in_vent_timer = millis(); // сброс таймера
+
+      in_vent_ON = !in_vent_ON;
+    }
+  }
+  else
+  {
+    in_vent_ON = 0;
+  }
+  setDoer();
+}
+
+void setOutVent()
+{
+  if (pelte_ON)
+  {
+    if (millis() - out_vent_timer >= 1 * 1000)
+    {
+      out_vent_timer = millis(); // сброс таймера
+
+      out_vent_ON = !out_vent_ON;
+    }
+  }
+  else
+  {
+    out_vent_ON = 0;
+  }
+  setDoer();
 }
 
 void setup()
@@ -280,6 +332,10 @@ void setup()
 
   pinMode(PIN_PELTE, OUTPUT);
   digitalWrite(PIN_PELTE, 0);
+  pinMode(PIN_OUT_VENT, OUTPUT);
+  digitalWrite(PIN_OUT_VENT, 0);
+  pinMode(PIN_IN_VENT, OUTPUT);
+  digitalWrite(PIN_IN_VENT, 0);
 }
 
 void loop()
@@ -289,6 +345,9 @@ void loop()
     lcd.clear();
 
   setPelte();
+  setInVent();
+  // setOutVent();
   getTemp();
   drawUI();
+  settings();
 }
