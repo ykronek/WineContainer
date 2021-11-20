@@ -16,6 +16,9 @@
 #define PIN_OUT_VENT 10
 #define PIN_IN_VENT 11
 
+#define INTERVAL_IN_VENT_ON 30
+#define INTERVAL_IN_VENT_OFF 20
+
 byte celciy[8] = {
     B00111,
     B00101,
@@ -63,7 +66,7 @@ float set_his = 2;
 bool pelte_ON, in_vent_ON, out_vent_ON;
 
 byte setting_number = 1;
-bool set_mode = 0;
+bool set_mode = 0, choose_interval;
 
 uint32_t in_vent_timer, out_vent_timer;
 
@@ -280,9 +283,10 @@ void setInVent()
 {
   if (pelte_ON)
   {
-    if (millis() - in_vent_timer >= 20 * 1000)
+    if (millis() - in_vent_timer >= (choose_interval ? (INTERVAL_IN_VENT_ON * 1000) : (INTERVAL_IN_VENT_OFF * 1000)))
     {
       in_vent_timer = millis(); // сброс таймера
+      choose_interval = !choose_interval;
 
       in_vent_ON = !in_vent_ON;
     }
