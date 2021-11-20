@@ -13,8 +13,8 @@
 #define SW 4
 #define PIN_DS18B20 5
 #define PIN_PELTE 12
-#define PIN_OUT_VENT 11
-#define PIN_IN_VENT 10
+#define PIN_OUT_VENT 10
+#define PIN_IN_VENT 11
 
 byte celciy[8] = {
     B00111,
