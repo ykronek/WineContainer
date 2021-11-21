@@ -244,10 +244,10 @@ void setDoer()
   if (!pelte_ON)
     digitalWrite(PIN_PELTE, 1);
 
-  if (in_vent_ON)
-    digitalWrite(PIN_IN_VENT, 1);
-  if (!in_vent_ON)
-    digitalWrite(PIN_IN_VENT, 0);
+  if (pelte_ON)
+    digitalWrite(PIN_IN_VENT, 1); // ---------------------
+  if (!pelte_ON)
+    digitalWrite(PIN_IN_VENT, 0); // ---------------------
 
   if (pelte_ON)
     digitalWrite(PIN_OUT_VENT, 1); // ---------------------
